@@ -7,7 +7,6 @@ from L1Trigger.L1ExtraFromDigis.l1extraParticles_cfi import *
 gctUCTDigis =cms.EDProducer("UCT2015GctCandsProducer",
     egRelaxed = cms.InputTag("UCT2015Producer","RelaxedEGUnpacked"),
     egIsolated  = cms.InputTag("UCT2015Producer","IsolatedEGUnpacked"),
-    tauRelaxed = cms.InputTag("UCT2015Producer","RelaxedTauUnpacked"), # this collection is ignored in the final output, GT constraints 
     tauIsolated  = cms.InputTag("UCT2015Producer","RelaxedTauUnpacked"), # to switch to iso taus, do it here
     jetSource  = cms.InputTag("UCT2015Producer","CorrJetUnpacked"),
     setSource  = cms.InputTag("UCT2015Producer","SETUnpacked"),
