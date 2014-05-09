@@ -52,7 +52,7 @@ CorrectedDigis = cms.EDProducer(
 UCT2015Producer = cms.EDProducer(
     "UCT2015Producer",
     puCorrectHI = cms.bool(False), #old style, regions corrected instead
-    applyJetCalibration = cms.bool(True), # To Calibrate Jets directly in the producer 
+    applyJetCalibration = cms.bool(False), # To Calibrate Jets directly in the producer 
     puMultCorrect = cms.bool(True), # PU subtract regions
     useUICrho = cms.bool(False), 
     useHI = cms.bool(False),
