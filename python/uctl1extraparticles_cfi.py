@@ -1,6 +1,5 @@
 import FWCore.ParameterSet.Config as cms
 
-from L1Trigger.GlobalTrigger.gtDigis_cfi import gtDigis
 from Configuration.StandardSequences.RawToDigi_Data_cff import *
 from L1Trigger.L1ExtraFromDigis.l1extraParticles_cfi import *
 
@@ -34,7 +33,8 @@ l1extraParticlesUCT = cms.EDProducer("L1ExtraParticlesProd",
     ignoreHtMiss = cms.bool(False)
 )
 
-gtUCTDigis   = gtDigis.clone()
+import L1Trigger.GlobalTrigger.gtDigis_cfi
+gtUCTDigis   = L1Trigger.GlobalTrigger.gtDigis_cfi.gtDigis.clone()
 
 gtUCTDigis.GmtInputTag  = cms.InputTag("gtDigis") # this is original GMT info from DATA (GMT is read out by GT FED)
 gtUCTDigis.GctInputTag  = cms.InputTag("gctUCTDigis")
