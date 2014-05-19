@@ -52,7 +52,7 @@ CorrectedDigis = cms.EDProducer(
 UCT2015Producer = cms.EDProducer(
     "UCT2015Producer",
     puCorrectHI = cms.bool(False), #old style, regions corrected instead
-    applyJetCalibration = cms.bool(False), # To Calibrate Jets directly in the producer 
+    applyJetCalibration = cms.bool(True), # To Calibrate Jets directly in the producer 
     puMultCorrect = cms.bool(True), # PU subtract regions
     useUICrho = cms.bool(False), 
     useHI = cms.bool(False),
@@ -65,7 +65,7 @@ UCT2015Producer = cms.EDProducer(
     jetSeed = cms.uint32(10),
     tauSeed = cms.uint32(7),
     egtSeed = cms.uint32(2),
-    relativeTauIsolationCut = cms.double(1.),
+    relativeTauIsolationCut = cms.double(1.0),
     relativeJetIsolationCut = cms.double(0.5),
     switchOffTauIso= cms.double(60),
     egammaLSB = cms.double(1.0), # This has to correspond with the value from L1CaloEmThresholds
