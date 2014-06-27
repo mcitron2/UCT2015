@@ -59,6 +59,7 @@ UCT2015Producer = cms.EDProducer(
     # All of these uint32 thresholds are in GeV.
     puETMax = cms.uint32(7),
     regionETCutForHT = cms.uint32(7),
+    regionETCutForNeighbor = cms.uint32(3),
     regionETCutForMET = cms.uint32(0),
     minGctEtaForSums = cms.uint32(4),
     maxGctEtaForSums = cms.uint32(17),
