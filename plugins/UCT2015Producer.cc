@@ -108,6 +108,8 @@ class UCT2015Producer : public edm::EDProducer {
                 bool useUICrho; // which PU denstity to use for energy correction determination
                 bool useHI; // do HI-style background subtraction
 
+		bool do4x4Taus; //Define taus as 4x4 trigger towers instead of 4x8
+
                 unsigned int puETMax;
                 unsigned int puLevelHI;
                 unsigned int puLevelPUM0;
@@ -144,6 +146,7 @@ class UCT2015Producer : public edm::EDProducer {
 
                 unsigned int egtSeed;
                 unsigned int tauSeed;
+ 		unsigned int neighborSeed;
 
                 double relativeTauIsolationCut;
                 double relativeJetIsolationCut;
@@ -179,6 +182,7 @@ UCT2015Producer::UCT2015Producer(const edm::ParameterSet& iConfig) :
         puMultCorrect(iConfig.getParameter<bool>("puMultCorrect")),
         useUICrho(iConfig.getParameter<bool>("useUICrho")),
         useHI(iConfig.getParameter<bool>("useHI")),
+	do4x4Taus(iConfig.getParameter<bool>("do4x4Taus")),
         puETMax(iConfig.getParameter<unsigned int>("puETMax")),
         regionETCutForHT(iConfig.getParameter<unsigned int>("regionETCutForHT")),
         regionETCutForMET(iConfig.getParameter<unsigned int>("regionETCutForMET")),
@@ -187,6 +191,8 @@ UCT2015Producer::UCT2015Producer(const edm::ParameterSet& iConfig) :
         jetSeed(iConfig.getParameter<unsigned int>("jetSeed")),
         egtSeed(iConfig.getParameter<unsigned int>("egtSeed")),
         tauSeed(iConfig.getParameter<unsigned int>("tauSeed")),
+	neighborSeed(iConfig.getParameter<unsigned int>("neighborSeed")),
+	
 
         relativeTauIsolationCut(iConfig.getParameter<double>("relativeTauIsolationCut")),
         relativeJetIsolationCut(iConfig.getParameter<double>("relativeJetIsolationCut")),
@@ -1078,107 +1084,85 @@ void UCT2015Producer::makeTaus() {
                                 &mipInSecondRegion,&tauInSecondRegion,&tauInAssociated4x4,&associatedSecondRegionEta,&associatedNW_Et,&associatedN_Et,&associatedNE_Et,&associatedE_Et,&associatedSE_Et,&associatedS_Et,&associatedSW_Et,&associatedW_Et);
 
                 double tauEt=regionEt;
-		if (tauEt > associatedN_Et && tauEt > associatedW_Et && tauEt >= associatedS_Et && tauEt >= associatedE_Et){ //only count centered on higher Et 4x4 (nondiagonal)
-			//find maximum neighbor
-			vector<double> FourByFourCands;
-			FourByFourCands.push_back(associatedN_Et);
-			FourByFourCands.push_back(associatedW_Et);
-			FourByFourCands.push_back(associatedS_Et);
-			FourByFourCands.push_back(associatedE_Et);
-			double maxNeighborEt = 0;
-			for (unsigned int j = 0;j<FourByFourCands.size();j++){
-				 if(FourByFourCands[j]>maxNeighborEt){
-					maxNeighborEt = FourByFourCands[j];
-				 }
-			}
-                	//if(maxNeighborEt>tauSeed){  
-				tauEt +=maxNeighborEt; //4X8 taus
-				std::cout << "Central Value:"<<regionEt << std::endl;
-				std::cout << "4x8 Et:"<<tauEt<<std::endl;
-				std::cout << "Max Neighbor Location:"<<associated4x4Loc<<std::endl;
-				std::cout << "NW:" << associatedNW_Et <<"   N:" << associatedN_Et << "   NE:" << associatedNE_Et << "   E:" 
-					<< associatedE_Et << "   SE:"<<associatedSE_Et<<"   S:"<<associatedS_Et<<"   SW:"<<associatedSW_Et
-					<< "   W:"<<associatedW_Et<<std::endl;
-			//}
-			/*else{
-				std::cout << "Max Neighbor Below Tau Seed"<<std::endl;
-                                std::cout << "Central Value:"<<regionEt << std::endl;
-                                std::cout << "4x8 Et:"<<tauEt<<std::endl;
-			}*/
-			
-			
-                //if(associated4x4Et>tauSeed)  tauEt +=associated4x4Et; //4X8 taus
-		//double combinedEta = (convertRegionEta(region->id().ieta()) + convertRegionEta(associatedSecondRegionEta))/2;
-		//if(associatedSecondRegionEt == regionEt){
-                //	std::cout << "regionEt" << regionEt << std::endl;
-                //	std::cout << "Associated Second Region Et" << associatedSecondRegionEt << std::endl;
-		//	std::cout << "Associated Third Region Et" << associatedThirdRegionEt << std::endl;
-		//}
-		/*if (associated4x4Et > associatedSecondRegionEt){
-			std::cout << "regionEt: " << regionEt << std::endl;
-			std::cout << "associated4x4Et: " << associated4x4Et<<  std::endl;
-			std::cout << "Associated Second Region Et: " << associatedSecondRegionEt << std::endl;
-		}*/
-		//if (regionEt >= associated4x4Et){  //only count tau on higher Et 4X4
-		//{
-		        //std::cout << "regionEt" << regionEt << std::endl;
-                        //std::cout << "Associated Second Region Et" << associatedSecondRegionEt << std::endl;
-                	//std::cout << "Associated Third Region Et" << associatedThirdRegionEt << std::endl;
-			//std::cout << "mipBit" << region->mip() << std::endl;
-			//std::cout << "associatedSecondRegionMIP" << mipInSecondRegion << std::endl;
-			//std::cout << "associatedSecondRegionTau" << tauInSecondRegion << std::endl;
-			//std::cout << "tauVeto" << region->tauVeto() << std::endl;
+		//find maximum neighbor
+		vector<double> FourByFourCands;
+		FourByFourCands.push_back(associatedN_Et);
+		FourByFourCands.push_back(associatedW_Et);
+		FourByFourCands.push_back(associatedS_Et);
+		FourByFourCands.push_back(associatedE_Et);
+		double maxNeighborEt = 0;
+		for (unsigned int j = 0;j<FourByFourCands.size();j++){
+			 if(FourByFourCands[j]>maxNeighborEt){ 
+				maxNeighborEt = FourByFourCands[j];
+			 }
+		}
+                if(maxNeighborEt>neighborSeed and not do4x4Taus){ //default recommended setting of neighborSeed is 0   
+			tauEt +=maxNeighborEt; //4X8 taus
+		}
 		
-                	UCTCandidate tauCand(
-                        	        tauEt,
-                                	convertRegionEta(region->id().ieta()),    //tau will be positioned on the higher Et 4X4
-                             		convertRegionPhi(region->id().iphi()));   
+		
+		
+                UCTCandidate tauCand(
+                	        tauEt,
+                        	convertRegionEta(region->id().ieta()),    //tau will be positioned on the higher Et 4X4
+                     		convertRegionPhi(region->id().iphi()));   
 
 	
-                                	tauCand.setInt("gctEta", region->gctEta());
-                                	tauCand.setInt("gctPhi", region->gctPhi());
-                                	tauCand.setInt("rgnEta", region->id().ieta());
-                                	tauCand.setInt("rgnPhi", region->id().iphi());
-                                	tauCand.setInt("rctEta", region->id().rctEta());
-                                	tauCand.setInt("rctPhi", region->id().rctPhi());
-                                	tauCand.setFloat("associatedJetPt", -3);
-                                	tauCand.setFloat("associatedRegionEt", regionEt);
-                                	tauCand.setFloat("puLevelHI", puLevelHI);
-                                	tauCand.setFloat("puLevelHIUIC", puLevelHIUIC);
-                                	tauCand.setFloat("puLevelPUM0",puLevelPUM0);
-                                	tauCand.setInt("tauVeto", region->tauVeto());
-                                	tauCand.setInt("mipBit", region->mip());
-                                	tauCand.setFloat("associatedSecondRegionEt", associatedSecondRegionEt);
-  					tauCand.setFloat("associated4x4Et", associated4x4Et); 
-                                	tauCand.setInt("associatedSecondRegionMIP", mipInSecondRegion);
-					tauCand.setInt("associatedSecondRegionTau",tauInSecondRegion);
-					tauCand.setInt("associated4x4Tau",tauInAssociated4x4);
-                                	tauCand.setFloat("associatedThirdRegionEt", associatedThirdRegionEt);
+                        	tauCand.setInt("gctEta", region->gctEta());
+                        	tauCand.setInt("gctPhi", region->gctPhi());
+                        	tauCand.setInt("rgnEta", region->id().ieta());
+                        	tauCand.setInt("rgnPhi", region->id().iphi());
+                        	tauCand.setInt("rctEta", region->id().rctEta());
+                        	tauCand.setInt("rctPhi", region->id().rctPhi());
+                        	tauCand.setFloat("associatedJetPt", -3);
+                        	tauCand.setFloat("associatedRegionEt", regionEt);
+                        	tauCand.setFloat("puLevelHI", puLevelHI);
+                        	tauCand.setFloat("puLevelHIUIC", puLevelHIUIC);
+                        	tauCand.setFloat("puLevelPUM0",puLevelPUM0);
+                        	tauCand.setInt("tauVeto", region->tauVeto());
+                        	tauCand.setInt("mipBit", region->mip());
+                        	tauCand.setFloat("associatedSecondRegionEt", associatedSecondRegionEt);
+  				tauCand.setFloat("associated4x4Et", associated4x4Et); 
+                        	tauCand.setInt("associatedSecondRegionMIP", mipInSecondRegion);
+				tauCand.setInt("associatedSecondRegionTau",tauInSecondRegion);
+				tauCand.setInt("associated4x4Tau",tauInAssociated4x4);
+                        	tauCand.setFloat("associatedThirdRegionEt", associatedThirdRegionEt);
 
-                                	rlxTauRegionOnlyList.push_back(tauCand);
+                        	rlxTauRegionOnlyList.push_back(tauCand);
 
-                                	// Look for overlapping jet and require that isolation be passed
-                                	for(list<UCTCandidate>::iterator jet = jetList.begin(); jet != jetList.end(); jet++) {
-//                                  for(list<UCTCandidate>::iterator jet = corrJetList.begin(); jet != corrJetList.end(); jet++) {      
-                                        	if((int)region->gctPhi() == jet->getInt("rgnPhi") &&
-                                                	        (int)region->gctEta() == jet->getInt("rgnEta")) {
-                                                	rlxTauRegionOnlyList.back().setFloat("associatedJetPt", jet->pt());
+                        	// Look for overlapping jet and require that isolation be passed
+                        	for(list<UCTCandidate>::iterator jet = jetList.begin(); jet != jetList.end(); jet++) {
+//                          for(list<UCTCandidate>::iterator jet = corrJetList.begin(); jet != corrJetList.end(); jet++) {      
+                                        std::cout << "regiongctPhi" <<  region->gctPhi() << std::endl;
+                          		std::cout << "jetrgnPhi" << jet->getInt("rgnPhi") << std::endl;
+                          		std::cout << "regiongctEta" << (int) region->gctEta() << std::endl;
+                          		std::cout << "jetrgnEta" << jet->getInt("rgnEta")<<std::endl;;
+                                	if((int)region->gctPhi() == jet->getInt("rgnPhi") &&
+                                        	        (int)region->gctEta() == jet->getInt("rgnEta")) {
+						std::cout << "regiongctPhi" <<  region->gctPhi() << std::endl;
+                                        	rlxTauRegionOnlyList.back().setFloat("associatedJetPt", jet->pt());
 
-							//4x4 Iso definitions
-                                                	//double jetIsolation = jet->pt() - regionEt;        // Jet isolation
-                                                	//double relativeJetIsolation = jetIsolation / regionEt;
-                                                	//if(relativeJetIsolation < relativeTauIsolationCut || regionEt > switchOffTauIso){
-							//4x8 Iso definitions
-                                                        double jetIsolation = jet->pt() - tauEt;        // Jet isolation
-                                                        double relativeJetIsolation = jetIsolation / tauEt;
-                                                        if(relativeJetIsolation < relativeTauIsolationCut || tauEt > switchOffTauIso){
-                                                        	isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
-                                                	}	
+						//4x4 Iso definitions
+						if (do4x4Taus){
+                                        		double jetIsolation = jet->pt() - regionEt;        // Jet isolation
+                                        		double relativeJetIsolation = jetIsolation / regionEt;
+                                        		if(relativeJetIsolation < relativeTauIsolationCut || regionEt > switchOffTauIso){
+								isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
+							}
+						}
+						//4x8 Iso definitions
+						else{
+                                               		double jetIsolation = jet->pt() - tauEt;        // Jet isolation
+                                                	double relativeJetIsolation = jetIsolation / tauEt;
+                                                	if(relativeJetIsolation < relativeTauIsolationCut || tauEt > switchOffTauIso){
+                                                		isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
+                                        		}
+						}	
 
-                                                	break;
-                                        	}	
-                                	}
-		}
+                                        	break;
+                                	}	
+                        	}
+		
         }
         rlxTauRegionOnlyList.sort();
         isoTauRegionOnlyList.sort();
