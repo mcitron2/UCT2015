@@ -1018,7 +1018,7 @@ void UCT2015Producer::makeEGTaus() {
 
            // Look for overlapping jet and require that isolation be passed
 //             for(list<UCTCandidate>::iterator jet = corrJetList.begin(); jet != corrJetList.end(); jet++) { 
-           boolMATCHEDJETFOUND_=false;
+           bool MATCHEDJETFOUND_=false;
            for(list<UCTCandidate>::iterator jet = jetList.begin(); jet != jetList.end(); jet++) {
 
              if((int)egtCand->regionId().iphi() == jet->getInt("rgnPhi") &&
