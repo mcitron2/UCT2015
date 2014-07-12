@@ -883,9 +883,9 @@ void UCT2015Producer::findAnnulusInfo(int ieta, int iphi,
   }
   // check if we need to remove the highest neighbor from the flag count.
   if (highestNeighborHasMip)
-          mipsCount--;
+    mipsCount--;
   if (highestNeighborHasEGFlag)
-          egFlagCount--;
+    egFlagCount--;
 
   // set output
   *associatedSecondRegionEt = highestNeighborEt;
@@ -918,7 +918,6 @@ void UCT2015Producer::makeEGTaus() {
       egtCand != newEMCands->end(); egtCand++){
     double et = egPhysicalEt(*egtCand);
     if(et > egtSeed) {
-     	
       for(L1CaloRegionCollection::const_iterator region = newRegions->begin();
          region != newRegions->end(); region++) {
        if(egtCand->regionId().iphi() == region->gctPhi() &&
@@ -1100,11 +1099,11 @@ void UCT2015Producer::makeTaus() {
     unsigned int tauInSecondRegion = 0;
     unsigned int tauInAssociated4x4 = 0;
     findAnnulusInfo(
-                    region->id().ieta(), region->id().iphi(),
-                    *newRegions,
-                    &associatedSecondRegionEt, &associated4x4Et, &associated4x4Loc, &associatedThirdRegionEt,  &mipsInAnnulus, &egFlagsInAnnulus,
-                    &mipInSecondRegion,&tauInSecondRegion,&tauInAssociated4x4,&associatedSecondRegionEta,&associatedNW_Et,&associatedN_Et,
-          	     &associatedNE_Et,&associatedE_Et,&associatedSE_Et,&associatedS_Et,&associatedSW_Et,&associatedW_Et);
+                   region->id().ieta(), region->id().iphi(),
+                   *newRegions,
+                   &associatedSecondRegionEt, &associated4x4Et, &associated4x4Loc, &associatedThirdRegionEt,  &mipsInAnnulus, &egFlagsInAnnulus,
+                   &mipInSecondRegion,&tauInSecondRegion,&tauInAssociated4x4,&associatedSecondRegionEta,&associatedNW_Et,&associatedN_Et,
+          	   &associatedNE_Et,&associatedE_Et,&associatedSE_Et,&associatedS_Et,&associatedSW_Et,&associatedW_Et);
 
     double tauEt=regionEt;
     //find maximum neighbor
