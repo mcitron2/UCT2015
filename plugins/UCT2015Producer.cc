@@ -918,6 +918,7 @@ void UCT2015Producer::makeEGTaus() {
       egtCand != newEMCands->end(); egtCand++){
     double et = egPhysicalEt(*egtCand);
     if(et > egtSeed) {
+
       for(L1CaloRegionCollection::const_iterator region = newRegions->begin();
          region != newRegions->end(); region++) {
        if(egtCand->regionId().iphi() == region->gctPhi() &&
@@ -1151,12 +1152,15 @@ void UCT2015Producer::makeTaus() {
     tauCand.setFloat("associatedThirdRegionEt", associatedThirdRegionEt);
 
     rlxTauRegionOnlyList.push_back(tauCand);
+   
+    bool MATCHEDJETFOUND_=false;
 
     // Look for overlapping jet and require that isolation be passed
     for(list<UCTCandidate>::iterator jet = jetList.begin(); jet != jetList.end(); jet++) {
-//  for(list<UCTCandidate>::iterator jet = corrJetList.begin(); jet != corrJetList.end(); jet++) {      
+      //                                  for(list<UCTCandidate>::iterator jet = corrJetList.begin(); jet != corrJetList.end(); jet++) {      
       if((int)region->gctPhi() == jet->getInt("rgnPhi") &&
         (int)region->gctEta() == jet->getInt("rgnEta")) {
+       MATCHEDJETFOUND_=true;
        rlxTauRegionOnlyList.back().setFloat("associatedJetPt", jet->pt());
 
     	//4x4 Iso definitions
@@ -1179,6 +1183,11 @@ void UCT2015Producer::makeTaus() {
        break;
       }	
     }
+    if(!MATCHEDJETFOUND_){ 
+       rlxTauRegionOnlyList.back().setFloat("associatedJetPt", -777);
+       isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
+    }
+     
   	
   }
   rlxTauRegionOnlyList.sort();
