@@ -958,8 +958,8 @@ void UCT2015Producer::makeEGTaus() {
                            *newRegions,
                            &associatedSecondRegionEt, &associated4x4Et, &associated4x4Loc, &associatedThirdRegionEt, &mipsInAnnulus, &egFlagsInAnnulus,
                            &mipInSecondRegion,&tauInSecondRegion,&tauInAssociated4x4,&associatedSecondRegionEta,&associatedNW_Et,
-               	    &associatedN_Et,&associatedNE_Et,&associatedE_Et,&associatedSE_Et,&associatedS_Et,
-               	    &associatedSW_Et,&associatedW_Et);
+               	           &associatedN_Et,&associatedNE_Et,&associatedE_Et,&associatedSE_Et,&associatedS_Et,
+               	            &associatedSW_Et,&associatedW_Et);
 
            UCTCandidate egtauCand(
                                   et,
@@ -1018,12 +1018,14 @@ void UCT2015Producer::makeEGTaus() {
 
            // Look for overlapping jet and require that isolation be passed
 //             for(list<UCTCandidate>::iterator jet = corrJetList.begin(); jet != corrJetList.end(); jet++) { 
+           boolMATCHEDJETFOUND_=false;
            for(list<UCTCandidate>::iterator jet = jetList.begin(); jet != jetList.end(); jet++) {
 
              if((int)egtCand->regionId().iphi() == jet->getInt("rgnPhi") &&
                 (int)egtCand->regionId().ieta() == jet->getInt("rgnEta")) {
              // Embed tuning parameters into the relaxed objects
                rlxTauList.back().setFloat("associatedJetPt", jet->pt());
+               MATCHEDJETFOUND_=true;
 
 
 
@@ -1051,12 +1053,21 @@ void UCT2015Producer::makeEGTaus() {
                if(et<63 && relativeJetIsolationEG < relativeJetIsolationCut)  isolatedEG=true;; 
                if (et>=63) isolatedEG=true;;
 
-               if(isEle && isolatedEG){
-                 isoEGList.push_back(rlxEGList.back());
+               if(isEle){
+		 rlxEGList.back().setInt("isIsolated",isolatedEG); 
+		 if(isolatedEG){
+                   isoEGList.push_back(rlxEGList.back());
+		 }
                }
                break;
              }
-           } 
+           }
+           if(!MATCHEDJETFOUND_ && isEle) {
+	     rlxEGList.back().setFloat("associatedJetPt",-777);
+	     rlxEGList.back().setInt("isHighPtEle",true);        
+	     rlxEGList.back().setInt("isIsolated",true);
+	     isoEGList.push_back(rlxEGList.back());
+	   } 
            break;
        }
       }
@@ -1184,8 +1195,8 @@ void UCT2015Producer::makeTaus() {
       }	
     }
     if(!MATCHEDJETFOUND_){ 
-       rlxTauRegionOnlyList.back().setFloat("associatedJetPt", -777);
-       isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
+      rlxTauRegionOnlyList.back().setFloat("associatedJetPt", -777);
+      isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
     }
      
   	
