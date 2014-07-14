@@ -1078,7 +1078,7 @@ void UCT2015Producer::makeEGTaus() {
             rlxEGList.back().setInt("isIsolated",true);
             isoEGList.push_back(rlxEGList.back());
 	  }
-          break; 
+         break; 
         }
       }
     }
