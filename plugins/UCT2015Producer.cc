@@ -70,23 +70,23 @@ private:
   void findAnnulusInfo(int ieta, int iphi,
                       const L1CaloRegionCollection& regions,
                       double* associatedSecondRegionEt,
-  		      double* associated4x4Et,
-  		      std::string* associated4x4Loc,
+                      double* associated4x4Et,
+                      std::string* associated4x4Loc,
                       double* associatedThirdRegionEt,
                       unsigned int* mipsInAnnulus,
                       unsigned int* egFlagsInAnnulus,
                       unsigned int* mipInSecondRegion,
-  		      unsigned int* tauInSecondRegion,
-  		      unsigned int* tauInAssociated4x4,
-  		      double* associatedSecondRegionEta,
-  		      double* associatedNW_Et,
-  		      double* associatedN_Et,
-  		      double* associatedNE_Et, 
-  		      double* associatedE_Et, 
-  		      double* associatedSE_Et, 
-  		      double* associatedS_Et,
-  		      double* associatedSW_Et, 
-  		      double* associatedW_Et) const;
+                      unsigned int* tauInSecondRegion,
+                      unsigned int* tauInAssociated4x4,
+                      double* associatedSecondRegionEta,
+                      double* associatedNW_Et,
+                      double* associatedN_Et,
+                      double* associatedNE_Et, 
+                      double* associatedE_Et, 
+                      double* associatedSE_Et, 
+                      double* associatedS_Et,  
+                      double* associatedSW_Et,
+                      double* associatedW_Et) const;
 
   // Helper methods
 
@@ -169,6 +169,7 @@ private:
   double regionLSB_;
 
   vector<double> m_jetSF;
+
 };
 
 unsigned const UCT2015Producer::N_JET_PHI = L1CaloRegionDetId::N_PHI * 4;
@@ -183,22 +184,26 @@ UCT2015Producer::UCT2015Producer(const edm::ParameterSet& iConfig) :
   puMultCorrect(iConfig.getParameter<bool>("puMultCorrect")),
   useUICrho(iConfig.getParameter<bool>("useUICrho")),
   useHI(iConfig.getParameter<bool>("useHI")),
-  do4x4Taus(iConfig.getParameter<bool>("do4x4Taus")),
   puETMax(iConfig.getParameter<unsigned int>("puETMax")),
+
+  do4x4Taus(iConfig.getParameter<bool>("do4x4Taus")),
+
   regionETCutForHT(iConfig.getParameter<unsigned int>("regionETCutForHT")),
   regionETCutForNeighbor(iConfig.getParameter<unsigned int>("regionETCutForNeighbor")),
   regionETCutForMET(iConfig.getParameter<unsigned int>("regionETCutForMET")),
+
   minGctEtaForSums(iConfig.getParameter<unsigned int>("minGctEtaForSums")),
   maxGctEtaForSums(iConfig.getParameter<unsigned int>("maxGctEtaForSums")),
+
   jetSeed(iConfig.getParameter<unsigned int>("jetSeed")),
   egtSeed(iConfig.getParameter<unsigned int>("egtSeed")),
   tauSeed(iConfig.getParameter<unsigned int>("tauSeed")),
   neighborSeed(iConfig.getParameter<unsigned int>("neighborSeed")),
   
-
   relativeTauIsolationCut(iConfig.getParameter<double>("relativeTauIsolationCut")),
   relativeJetIsolationCut(iConfig.getParameter<double>("relativeJetIsolationCut")),
   switchOffTauIso(iConfig.getParameter<double>("switchOffTauIso")),
+
   egLSB_(iConfig.getParameter<double>("egammaLSB")),
   regionLSB_(iConfig.getParameter<double>("regionLSB"))
 {
@@ -749,15 +754,15 @@ UCT2015Producer::correctJets(const list<UCTCandidate>& jets, bool isJet) {
 void UCT2015Producer::findAnnulusInfo(int ieta, int iphi,
                                      const L1CaloRegionCollection& regions,
                                      double* associatedSecondRegionEt,
-		                     double* associated4x4Et,
-		                     std::string* associated4x4Loc,
+                                     double* associated4x4Et,
+                                     std::string* associated4x4Loc,
                                      double* associatedThirdRegionEt,
                                      unsigned int* mipsInAnnulus,
                                      unsigned int* egFlagsInAnnulus,
                                      unsigned int* mipInSecondRegion,
-		                     unsigned int* tauInSecondRegion,
-		                     unsigned int* tauInAssociated4x4,
-		                     double* associatedSecondRegionEta,
+                                     unsigned int* tauInSecondRegion,
+                                     unsigned int* tauInAssociated4x4,
+                                     double* associatedSecondRegionEta,
                                      double* associatedNW_Et,
                                      double* associatedN_Et,
                                      double* associatedNE_Et,
@@ -832,13 +837,13 @@ void UCT2015Producer::findAnnulusInfo(int ieta, int iphi,
       }
 
       if (regionET > highestNeighborEt) {
-        if(highestNeighborEt!=0) secondNeighborEt=highestNeighborEt;
-        highestNeighborEt = regionET;
-        // Keep track of what flags the highest neighbor has
-        highestNeighborHasMip = region->mip();
-        highestNeighborHasTau = region->tauVeto();
-        highestNeighborHasEGFlag = !region->mip() && !region->tauVeto();
-        highestEtNeighborEta = region->id().ieta();
+       if(highestNeighborEt!=0) secondNeighborEt=highestNeighborEt;
+       highestNeighborEt = regionET;
+       // Keep track of what flags the highest neighbor has
+       highestNeighborHasMip = region->mip();
+       highestNeighborHasTau = region->tauVeto();
+       highestNeighborHasEGFlag = !region->mip() && !region->tauVeto();
+       highestEtNeighborEta = region->id().ieta();
       
       			
       					
