@@ -1194,13 +1194,13 @@ void UCT2015Producer::makeTaus() {
           }
         }
     	//4x8 Iso definitions
-    	else{
+        else{
           double jetIsolation = jet->pt() - tauEt;        // Jet isolation
           double relativeJetIsolation = jetIsolation / tauEt;
           if(relativeJetIsolation < relativeTauIsolationCut || tauEt > switchOffTauIso){
             isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
           }
-    	}	
+        }	
 
         break;
       }	
