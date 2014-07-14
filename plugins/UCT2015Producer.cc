@@ -1064,19 +1064,19 @@ void UCT2015Producer::makeEGTaus() {
               if (et>=63) isolatedEG=true;;
 
               if(isEle){
-                rlxEGList.back().setInt("isIsolated",isolatedEG); 
-	        if(isolatedEG){
+                rlxEGList.back().setInt("isIsolated",isolatedEG);
+                if(isolatedEG){
                   isoEGList.push_back(rlxEGList.back());
-	        }
+                }
               }
               break;
             }
           }
           if(!MATCHEDJETFOUND_ && isEle) {
-	    rlxEGList.back().setFloat("associatedJetPt",-777);
-	    rlxEGList.back().setInt("isHighPtEle",true);        
-	    rlxEGList.back().setInt("isIsolated",true);
-	    isoEGList.push_back(rlxEGList.back());
+            rlxEGList.back().setFloat("associatedJetPt",-777);
+            rlxEGList.back().setInt("isHighPtEle",true);        
+            rlxEGList.back().setInt("isIsolated",true);
+            isoEGList.push_back(rlxEGList.back());
 	  }  
           break;
         }
