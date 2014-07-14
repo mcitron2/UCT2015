@@ -122,7 +122,7 @@ private:
   int sumEy;
   unsigned int MET;
 
-  unsigned int regionETCutForHT;		
+  unsigned int regionETCutForHT;
   unsigned int regionETCutForNeighbor;
   unsigned int regionETCutForMET;
 
@@ -832,13 +832,13 @@ void UCT2015Producer::findAnnulusInfo(int ieta, int iphi,
       }
 
       if (regionET > highestNeighborEt) {
-       if(highestNeighborEt!=0) secondNeighborEt=highestNeighborEt;
-       highestNeighborEt = regionET;
-       // Keep track of what flags the highest neighbor has
-       highestNeighborHasMip = region->mip();
-       highestNeighborHasTau = region->tauVeto();
-       highestNeighborHasEGFlag = !region->mip() && !region->tauVeto();
-       highestEtNeighborEta = region->id().ieta();
+        if(highestNeighborEt!=0) secondNeighborEt=highestNeighborEt;
+        highestNeighborEt = regionET;
+        // Keep track of what flags the highest neighbor has
+        highestNeighborHasMip = region->mip();
+        highestNeighborHasTau = region->tauVeto();
+        highestNeighborHasEGFlag = !region->mip() && !region->tauVeto();
+        highestEtNeighborEta = region->id().ieta();
       
       			
       					
@@ -938,6 +938,7 @@ void UCT2015Producer::makeEGTaus() {
            double associatedSecondRegionEt = 0;
            double associated4x4Et = 0;
            std::string associated4x4Loc = "";
+
            double associatedNW_Et = 0;
            double associatedN_Et = 0;
            double associatedNE_Et = 0;
@@ -946,20 +947,24 @@ void UCT2015Producer::makeEGTaus() {
            double associatedS_Et = 0;
            double associatedSW_Et = 0;
            double associatedW_Et = 0;
+
            double associatedThirdRegionEt = 0;
            double associatedSecondRegionEta = 0;
+
            unsigned int mipsInAnnulus = 0;
            unsigned int egFlagsInAnnulus = 0;
            unsigned int mipInSecondRegion = 0;
            unsigned int tauInSecondRegion = 0;
            unsigned int tauInAssociated4x4 =0;
+           
            findAnnulusInfo(
                            egtCand->regionId().ieta(), egtCand->regionId().iphi(),
                            *newRegions,
-                           &associatedSecondRegionEt, &associated4x4Et, &associated4x4Loc, &associatedThirdRegionEt, &mipsInAnnulus, &egFlagsInAnnulus,
+                           &associatedSecondRegionEt, &associated4x4Et, &associated4x4Loc, &associatedThirdRegionEt, 
+                           &mipsInAnnulus, &egFlagsInAnnulus,
                            &mipInSecondRegion,&tauInSecondRegion,&tauInAssociated4x4,&associatedSecondRegionEta,&associatedNW_Et,
-               	           &associatedN_Et,&associatedNE_Et,&associatedE_Et,&associatedSE_Et,&associatedS_Et,
-               	            &associatedSW_Et,&associatedW_Et);
+                           &associatedN_Et,&associatedNE_Et,&associatedE_Et,&associatedSE_Et,&associatedS_Et,
+                           &associatedSW_Et,&associatedW_Et);
 
            UCTCandidate egtauCand(
                                   et,
