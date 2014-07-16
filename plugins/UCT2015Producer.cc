@@ -108,9 +108,10 @@ private:
   bool useUICrho; // which PU denstity to use for energy correction determination
   bool useHI; // do HI-style background subtraction
 
+  unsigned int puETMax;
+
   bool do4x4Taus; //Define taus as 4x4 trigger towers instead of 4x8
 
-  unsigned int puETMax;
   unsigned int puLevelHI;
   unsigned int puLevelPUM0;
   //double puLevelHIUIC; // puLevelHI divided by puCount*Area, not multiply by 9.0
