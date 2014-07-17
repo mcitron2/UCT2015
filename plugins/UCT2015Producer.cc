@@ -269,8 +269,6 @@ UCT2015Producer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   if(puCorrectHI) puSubtraction();
 
-  makeSums();
-  makeEGTaus();
   // make sums and jets 0
   makeSums();
   makeJets();
