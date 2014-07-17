@@ -56,7 +56,7 @@ UCT2015Producer = cms.EDProducer(
     puMultCorrect = cms.bool(True), # PU subtract regions (superseedes CorrectedDigis if set to false)
     useUICrho = cms.bool(False), 
     useHI = cms.bool(False),
-    do4x4Taus = cms.bool(True),
+    do4x4Taus = cms.bool(False),
     # All of these uint32 thresholds are in GeV.
     puETMax = cms.uint32(7),
     regionETCutForHT = cms.uint32(7),
