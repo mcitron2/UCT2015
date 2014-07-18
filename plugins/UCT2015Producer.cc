@@ -1139,7 +1139,7 @@ void UCT2015Producer::makeTaus() {
         maxNeighborEt = FourByFourCands[j];
       }
     }
-    if((tauEt > maxNeighborEt && (associated4x4Loc.compare("East") == 0 || associated4x4Loc.compare("North")==0)) || (tauEt >= maxNeighborEt && (associated4x4Loc.compare("South")==0 || associated4x4Loc.compare("West")==0)) || do4x4Taus){   
+    if(((tauEt > maxNeighborEt && (associated4x4Loc.compare("East") == 0 || associated4x4Loc.compare("North")==0)) || (tauEt >= maxNeighborEt && (associated4x4Loc.compare("South")==0 || associated4x4Loc.compare("West")==0))) || do4x4Taus){   
       if(maxNeighborEt>=neighborSeed && !do4x4Taus){ //default recommended setting of neighborSeed is 0
         tauEt +=maxNeighborEt; //4X8 taus
       }
