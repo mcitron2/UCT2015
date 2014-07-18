@@ -108,9 +108,10 @@ private:
   bool useUICrho; // which PU denstity to use for energy correction determination
   bool useHI; // do HI-style background subtraction
 
+  unsigned int puETMax;
+
   bool do4x4Taus; //Define taus as 4x4 trigger towers instead of 4x8
 
-  unsigned int puETMax;
   unsigned int puLevelHI;
   unsigned int puLevelPUM0;
   //double puLevelHIUIC; // puLevelHI divided by puCount*Area, not multiply by 9.0
@@ -268,8 +269,6 @@ UCT2015Producer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   if(puCorrectHI) puSubtraction();
 
-  makeSums();
-  makeEGTaus();
   // make sums and jets 0
   makeSums();
   makeJets();
@@ -849,7 +848,7 @@ void UCT2015Producer::findAnnulusInfo(int ieta, int iphi,
       					
       }
       if ((deltaPhi + deltaEta)<2){ //check nondiagonal neighbors
-        if (regionET > highest4x4Et){
+        if (regionET >= highest4x4Et){
           highest4x4Et = regionET;
           highestAssociated4x4HasTau = region->tauVeto();
           if (ieta-regionEta == -1){
@@ -1140,76 +1139,75 @@ void UCT2015Producer::makeTaus() {
         maxNeighborEt = FourByFourCands[j];
       }
     }
-    if(maxNeighborEt>neighborSeed and not do4x4Taus){ //default recommended setting of neighborSeed is 0   
-      tauEt +=maxNeighborEt; //4X8 taus
-    }
+    if(((tauEt > maxNeighborEt && (associated4x4Loc.compare("East") == 0 || associated4x4Loc.compare("North")==0)) || (tauEt >= maxNeighborEt && (associated4x4Loc.compare("South")==0 || associated4x4Loc.compare("West")==0))) || do4x4Taus){   
+      if(maxNeighborEt>=neighborSeed && !do4x4Taus){ //default recommended setting of neighborSeed is 0
+        tauEt +=maxNeighborEt; //4X8 taus
+      }
     
-    
-    
-    UCTCandidate tauCand(
-                        tauEt,
-                        convertRegionEta(region->id().ieta()),    //tau will be positioned on the higher Et 4X4
-                        convertRegionPhi(region->id().iphi()));   
+      UCTCandidate tauCand(
+                          tauEt,
+                          convertRegionEta(region->id().ieta()),    //tau will be positioned on the higher Et 4X4
+                          convertRegionPhi(region->id().iphi()));   
 
   
-    tauCand.setInt("gctEta", region->gctEta());
-    tauCand.setInt("gctPhi", region->gctPhi());
-    tauCand.setInt("rgnEta", region->id().ieta());
-    tauCand.setInt("rgnPhi", region->id().iphi());
-    tauCand.setInt("rctEta", region->id().rctEta());
-    tauCand.setInt("rctPhi", region->id().rctPhi());
-    tauCand.setFloat("associatedJetPt", -3);
-    tauCand.setFloat("associatedRegionEt", regionEt);
-    tauCand.setFloat("puLevelHI", puLevelHI);
-    tauCand.setFloat("puLevelHIUIC", puLevelHIUIC);
-    tauCand.setFloat("puLevelPUM0",puLevelPUM0);
-    tauCand.setInt("tauVeto", region->tauVeto());
-    tauCand.setInt("mipBit", region->mip());
-    tauCand.setFloat("associatedSecondRegionEt", associatedSecondRegionEt);
-    tauCand.setFloat("associated4x4Et", associated4x4Et); 
-    tauCand.setInt("associatedSecondRegionMIP", mipInSecondRegion);
-    tauCand.setInt("associatedSecondRegionTau",tauInSecondRegion);
-    tauCand.setInt("associated4x4Tau",tauInAssociated4x4);
-    tauCand.setFloat("associatedThirdRegionEt", associatedThirdRegionEt);
+      tauCand.setInt("gctEta", region->gctEta());
+      tauCand.setInt("gctPhi", region->gctPhi());
+      tauCand.setInt("rgnEta", region->id().ieta());
+      tauCand.setInt("rgnPhi", region->id().iphi());
+      tauCand.setInt("rctEta", region->id().rctEta());
+      tauCand.setInt("rctPhi", region->id().rctPhi());
+      tauCand.setFloat("associatedJetPt", -3);
+      tauCand.setFloat("associatedRegionEt", regionEt);
+      tauCand.setFloat("puLevelHI", puLevelHI);
+      tauCand.setFloat("puLevelHIUIC", puLevelHIUIC);
+      tauCand.setFloat("puLevelPUM0",puLevelPUM0);
+      tauCand.setInt("tauVeto", region->tauVeto());
+      tauCand.setInt("mipBit", region->mip());
+      tauCand.setFloat("associatedSecondRegionEt", associatedSecondRegionEt);
+      tauCand.setFloat("associated4x4Et", associated4x4Et); 
+      tauCand.setInt("associatedSecondRegionMIP", mipInSecondRegion);
+      tauCand.setInt("associatedSecondRegionTau",tauInSecondRegion);
+      tauCand.setInt("associated4x4Tau",tauInAssociated4x4);
+      tauCand.setFloat("associatedThirdRegionEt", associatedThirdRegionEt);
 
-    rlxTauRegionOnlyList.push_back(tauCand);
+      rlxTauRegionOnlyList.push_back(tauCand);
    
 
-    bool MATCHEDJETFOUND_=false;
+      bool MATCHEDJETFOUND_=false;
 
-    // Look for overlapping jet and require that isolation be passed
-    for(list<UCTCandidate>::iterator jet = jetList.begin(); jet != jetList.end(); jet++) {
-      //                                  for(list<UCTCandidate>::iterator jet = corrJetList.begin(); jet != corrJetList.end(); jet++) {      
-      if((int)region->gctPhi() == jet->getInt("rgnPhi") &&
-        (int)region->gctEta() == jet->getInt("rgnEta")) {
-        MATCHEDJETFOUND_=true;
-        rlxTauRegionOnlyList.back().setFloat("associatedJetPt", jet->pt());
+      // Look for overlapping jet and require that isolation be passed
+      for(list<UCTCandidate>::iterator jet = jetList.begin(); jet != jetList.end(); jet++) {
+        //                                  for(list<UCTCandidate>::iterator jet = corrJetList.begin(); jet != corrJetList.end(); jet++) {      
+        if((int)region->gctPhi() == jet->getInt("rgnPhi") &&
+          (int)region->gctEta() == jet->getInt("rgnEta")) {
+          MATCHEDJETFOUND_=true;
+          rlxTauRegionOnlyList.back().setFloat("associatedJetPt", jet->pt());
 
-    	//4x4 Iso definitions
-        if (do4x4Taus){
-          double jetIsolation = jet->pt() - regionEt;        // Jet isolation
-          double relativeJetIsolation = jetIsolation / regionEt;
-          if(relativeJetIsolation < relativeTauIsolationCut || regionEt > switchOffTauIso){
-            isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
+    	  //4x4 Iso definitions
+          if (do4x4Taus){
+            double jetIsolation = jet->pt() - regionEt;        // Jet isolation
+            double relativeJetIsolation = jetIsolation / regionEt;
+            if(relativeJetIsolation < relativeTauIsolationCut || regionEt > switchOffTauIso){
+              isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
+            }
           }
-        }
-    	//4x8 Iso definitions
-        else{
-          double jetIsolation = jet->pt() - tauEt;        // Jet isolation
-          double relativeJetIsolation = jetIsolation / tauEt;
-          if(relativeJetIsolation < relativeTauIsolationCut || tauEt > switchOffTauIso){
-            isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
-          }
+    	  //4x8 Iso definitions
+          else{
+            double jetIsolation = jet->pt() - tauEt;        // Jet isolation
+            double relativeJetIsolation = jetIsolation / tauEt;
+            if(relativeJetIsolation < relativeTauIsolationCut || tauEt > switchOffTauIso){
+              isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
+            }
+          }	
+
+          break;
         }	
-
-        break;
-      }	
-    }
-    if(!MATCHEDJETFOUND_){ 
-      rlxTauRegionOnlyList.back().setFloat("associatedJetPt", -777);
-      isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
-    }
-     
+      }
+      if(!MATCHEDJETFOUND_){ 
+        rlxTauRegionOnlyList.back().setFloat("associatedJetPt", -777);
+        isoTauRegionOnlyList.push_back(rlxTauRegionOnlyList.back());
+      }
+    } 
   	
   }
   rlxTauRegionOnlyList.sort();
