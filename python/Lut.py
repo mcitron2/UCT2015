@@ -106,14 +106,6 @@ RCTConfigProducers.jetMETECalScaleFactors = RCTConfigProducers.eGammaECalScaleFa
 #RCTConfigProducers.jetMETHCalScaleFactors = NoTwrCalib_ptdep
 RCTConfigProducers.jetMETHCalScaleFactors = LD_hcal_calib_v3_veto
 
-#RCTConfigProducers.jetMETHCalScaleFactors = [1., 1., 1., 1., 1.,
-#                                                 1., 1., 1., 1., 1.,
-#                                                 1., 1., 1., 1., 1.,
-#                                                 1., 1., 1., 1., 1.,
-#                                                 1., 1., 1., 1., 1.,
-#                                                 1., 1., 1.]
-
-
 #L1CaloInputScalesProducer =cms.ESProducer("L1CaloInputScalesProducer",
 #L1EcalEtThresholdsPositiveEta = cms.vdouble(
 L1CaloInputScalesProducer.L1EcalEtThresholdsPositiveEta = cms.vdouble(
