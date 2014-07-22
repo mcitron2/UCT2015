@@ -46,6 +46,7 @@ class UCT2015GctCandsProducer : public edm::EDProducer {
   edm::InputTag shtSource_;
   edm::InputTag metSource_;
   edm::InputTag mhtSource_;
+  edm::InputTag dhtSource_;
 
   bool saturateEG_;
 

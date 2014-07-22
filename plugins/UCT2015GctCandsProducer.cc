@@ -56,6 +56,7 @@ UCT2015GctCandsProducer::UCT2015GctCandsProducer(const edm::ParameterSet& ps) :
   shtSource_(ps.getParameter<edm::InputTag>("shtSource")),
   metSource_(ps.getParameter<edm::InputTag>("metSource")),
   mhtSource_(ps.getParameter<edm::InputTag>("mhtSource")),
+  dhtSource_(ps.getParameter<edm::InputTag>("dhtSource")),
   saturateEG_(ps.getUntrackedParameter<bool>("saturateEG",true)),
   maxEGs_(ps.getUntrackedParameter<int>("maxEGs",4)),
   maxIsoEGs_(ps.getUntrackedParameter<int>("maxIsoEGs",4)),
@@ -81,6 +82,7 @@ UCT2015GctCandsProducer::UCT2015GctCandsProducer(const edm::ParameterSet& ps) :
 
   produces<L1GctHFBitCountsCollection>();
   produces<L1GctHFRingEtSumsCollection>();
+  produces<double>("DHT");
 }
 
 UCT2015GctCandsProducer::~UCT2015GctCandsProducer() {
@@ -99,7 +101,9 @@ void UCT2015GctCandsProducer::produce(edm::Event& e, const edm::EventSetup& c) {
 
   // The emulator will always produce output collections, which get filled as long as
   // the setup and input data are present. Start by making empty output collections.
-
+  
+  //DHT
+  std::auto_ptr<double> DHTResult(new double() );
   // create the em and tau collections
   std::auto_ptr<L1GctEmCandCollection> isoEmResult   (new L1GctEmCandCollection( ) );
   std::auto_ptr<L1GctEmCandCollection> rlxEmResult(new L1GctEmCandCollection( ) );
@@ -386,6 +390,22 @@ void UCT2015GctCandsProducer::produce(edm::Event& e, const edm::EventSetup& c) {
                         }
 
       }
+    // DHT:
+
+      edm::Handle< UCTCandidateCollection > dhtObjs ;
+      e.getByLabel( dhtSource_, dhtObjs) ;
+
+      if( !dhtObjs.isValid() ) {
+                edm::LogError("")<<"MHT Collection not found - check name";
+      }
+      else {
+                if(dhtObjs->size()>0){ // This is just for safety
+                        UCTCandidate itr=dhtObjs->at(0);
+                        double rank=htMissScale->rank(itr.pt());
+                        *DHTResult=rank;
+			std::cout << *DHTResult << std::endl;
+                        }
+      }
 
 
 
@@ -396,7 +416,7 @@ void UCT2015GctCandsProducer::produce(edm::Event& e, const edm::EventSetup& c) {
 
   e.put(isoTauResult,"tauJets");
 //  e.put(rlxTauResult,"rlxTau");
-
+  e.put(DHTResult,"DHT");
   e.put(cenJetResult,"cenJets");
   e.put(forJetResult,"forJets");
 

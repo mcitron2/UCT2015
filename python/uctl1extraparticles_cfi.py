@@ -11,7 +11,8 @@ uctGctDigis =cms.EDProducer("UCT2015GctCandsProducer",
     setSource  = cms.InputTag("UCT2015Producer","SETUnpacked"),
     metSource  = cms.InputTag("UCT2015Producer","METUnpacked"),
     shtSource  = cms.InputTag("UCT2015Producer","SHTUnpacked"),
-    mhtSource  = cms.InputTag("UCT2015Producer","MHTUnpacked")
+    mhtSource  = cms.InputTag("UCT2015Producer","MHTUnpacked"),
+    dhtSource  = cms.InputTag("UCT2015Producer","DHTUnpacked")
 )
 
 l1extraParticlesUCT = cms.EDProducer("L1ExtraParticlesProd",
