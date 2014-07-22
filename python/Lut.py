@@ -71,12 +71,12 @@ eg_calib_v4 = [
 ]
 
 #Scale HCAL->1
-RCTConfigProducers.jetMETHCalScaleFactors = [1., 1., 1., 1., 1.,
-                                                 1., 1., 1., 1., 1.,
-                                                 1., 1., 1., 1., 1.,
-                                                 1., 1., 1., 1., 1.,
-                                                 1., 1., 1., 1., 1.,
-                                                 1., 1., 1.]
+#RCTConfigProducers.jetMETHCalScaleFactors = [1., 1., 1., 1., 1.,
+#                                                 1., 1., 1., 1., 1.,
+#                                                 1., 1., 1., 1., 1.,
+#                                                 1., 1., 1., 1., 1.,
+#                                                 1., 1., 1., 1., 1.,
+#                                                 1., 1., 1.]
 
 #EGamma HCAL SF No hcal in ecal
 RCTConfigProducers.eGammaHCalScaleFactors = [0., 0., 0., 0., 0.,
