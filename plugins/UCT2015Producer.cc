@@ -470,12 +470,20 @@ void UCT2015Producer::makeSums()
     double regionET =  regionPhysicalEt(*newRegion);     
 
     //        regionETVec.push_back(regionET);
-    if(regionET > reg1)
+    if(regionET >= reg1)
     {
       reg3 = reg2;
       reg2 = reg1; 
       reg1 = regionET; 
-      //std::cout << regionET << std::endl;
+    }
+    else if (regionET >= reg2)
+    {
+	reg3 = reg2;
+	reg2 = regionET; 
+    }
+    else if (regionET >= reg3)
+    {
+	reg3 = regionET;
     }
     /*
        if(puCorrectHISums)    {

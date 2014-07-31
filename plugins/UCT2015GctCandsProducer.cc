@@ -403,7 +403,7 @@ void UCT2015GctCandsProducer::produce(edm::Event& e, const edm::EventSetup& c) {
                         UCTCandidate itr=dhtObjs->at(0);
                         double rank=htMissScale->rank(itr.pt());
                         *DHTResult=rank;
-			std::cout << *DHTResult << std::endl;
+			//std::cout << *DHTResult << std::endl;
                         }
       }
 
